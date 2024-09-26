@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>enwatechx</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 20px;
+            background-color:rgb(139, 139, 130);
+        }
+        #textDisplay {
+            width: 35%;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 10px;
+            font-size: 20px;
+            border: 1px solid #ccc;
+            text-align: center;
+            white-space: pre-line;
+            min-height: 150px; 
+            background-color: azure;
+        }
+        .division {
+            margin: 20px auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            text-align: center;
+        }
+        .buttons-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            grid-gap: 10px;
+         border-color: black;
+        }
+        button {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #clearButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        /* Media queries for small screens */
+        @media (max-width: 600px) {
+            button {
+                padding: 8px;
+                font-size: 14px;
+            }
+
+            #textDisplay {
+                font-size: 16px;
+            }
+
+            #clearButton {
+                font-size: 16px;
+                padding: 8px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>طاولة رقم 4</h1>
+    <div id="textDisplay"></div>
+
+    <!-- Divisions for names -->
+    <div id="divisionContainer"></div>
+
+    <button id="clearButton">Clear Text</button>
+
+    <script>
+        // Array of names for the buttons (65 names, 5 divisions)
+        const names = ["نركيلة ليمون نعناع", "نركيلة انكليزي", "نركيلة تفاحتين", "نركيلة خلطة", "نركيلة فواكه","تكه لحم", "تكه دجاج", "كباب لحم", "كباب دجاج", 
+                       "مشكل", "معلاك", "اضافة زر", "اضافة زر","اضافة زر","اضافة زر","اضافة زر", "اضافة زر","اضافة زر", 
+                       "اضافة زر", "بيرة توبورك", "بيرة ايفيس", "بيرة كارلس بيرك", "بيرة ريم", " ويسكي كول ليبل ", "ويسكي شيفاز", "ويسكي بلاك ليبل", "ويسكي ريد ليبل", "ويسكي جاك دانييلز",
+                       "عرق بلوميري", "عرق اوزو", "بيك واحد اوزو", "بيك واحد بلوميري", "صحن زلاطة عادي", "حمص بطحينة", "زلاطة فتوش", "تبولة", "ماعون حضراوات", 
+                       "ماعون لبلبي", "ماعون باكلا", "بابا غنوج"];
+
+        // Array to track the number of times each button has been pressed
+        let pressCounts = Array(names.length).fill(0);
+
+        // Function to append name and update press count without duplicating
+        function appendName(index) {
+            pressCounts[index]++;
+            const textDisplay = document.getElementById('textDisplay');
+            
+            // Check if the name is already in the display
+            let displayText = textDisplay.textContent;
+            const regex = new RegExp(`${names[index]} \\(\\d+\\)`);
+
+            if (regex.test(displayText)) {
+                // Update the existing name with the new count
+                textDisplay.textContent = displayText.replace(regex, `${names[index]} (${pressCounts[index]})`);
+            } else {
+                // Add the name if it's not already in the display
+                textDisplay.textContent += `${names[index]} (${pressCounts[index]})\n`;
+            }
+        }
+
+        // Function to clear the text display
+        function clearText() {
+            const textDisplay = document.getElementById('textDisplay');
+            textDisplay.textContent = '';  // Clear the text content
+            pressCounts = Array(names.length).fill(0);  // Reset press counts
+        }
+
+        // Generate divisions with 6 names in the first division and 13 names in the rest
+        const divisionContainer = document.getElementById('divisionContainer');
+        const firstDivisionNames = 6; // First division with 6 buttons
+        const otherDivisionsNames = 13; // Rest of the divisions with 13 buttons each
+
+        // Create first division with 6 names
+        const firstDivision = document.createElement('div');
+        firstDivision.className = 'division';
+
+        const buttonsContainer1 = document.createElement('div');
+        buttonsContainer1.className = 'buttons-container';
+
+        for (let i = 0; i < firstDivisionNames; i++) {
+            const button = document.createElement('button');
+            button.textContent = names[i];
+            button.onclick = () => appendName(i);
+            buttonsContainer1.appendChild(button);
+        }
+        firstDivision.appendChild(buttonsContainer1);
+        divisionContainer.appendChild(firstDivision);
+
+        // Create the remaining divisions with 13 names each
+        for (let i = firstDivisionNames; i < names.length; i += otherDivisionsNames) {
+            const division = document.createElement('div');
+            division.className = 'division';
+
+            const buttonsContainer = document.createElement('div');
+            buttonsContainer.className = 'buttons-container';
+
+            // Add 13 names to each division
+            const startIndex = i;
+            const endIndex = Math.min(i + otherDivisionsNames, names.length);
+            for (let j = startIndex; j < endIndex; j++) {
+                const button = document.createElement('button');
+                button.textContent = names[j];
+                button.onclick = () => appendName(j);
+                buttonsContainer.appendChild(button);
+            }
+
+            division.appendChild(buttonsContainer);
+            divisionContainer.appendChild(division);
+        }
+
+        // Add event listener to the Clear button
+        const clearButton = document.getElementById('clearButton');
+        clearButton.addEventListener('click', clearText);
+    </script>
+
+</body>
+</html>
